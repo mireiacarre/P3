@@ -14,10 +14,19 @@ Ejercicios básicos
   `get_pitch`.
 
    * Complete el cálculo de la autocorrelación e inserte a continuación el código correspondiente.
+   for (unsigned int l = 0; l < r.size(); ++l) {
+      r[l] = 0;
+      for (unsigned int n = 0; n < x.size() - l; n++){
+        r[l] += x[n]*x[n+l];
+      }
+      r[l] = r[l]/x.size();
+    }
 
    * Inserte una gŕafica donde, en un *subplot*, se vea con claridad la señal temporal de un segmento de
      unos 30 ms de un fonema sonoro y su periodo de pitch; y, en otro *subplot*, se vea con claridad la
 	 autocorrelación de la señal y la posición del primer máximo secundario.
+
+    ![Análisi de una trama sonora](img/tramoSonoro30ms.jpg)
 
 	 NOTA: es más que probable que tenga que usar Python, Octave/MATLAB u otro programa semejante para
 	 hacerlo. Se valorará la utilización de la biblioteca matplotlib de Python.
@@ -25,7 +34,18 @@ Ejercicios básicos
    * Determine el mejor candidato para el periodo de pitch localizando el primer máximo secundario de la
      autocorrelación. Inserte a continuación el código correspondiente.
 
+    iRMax = r.begin() + npitch_min;
+    for(iR = iRMax; iR < r.begin() + npitch_max; iR++){
+      if(*iR > *iRMax) iRMax = iR;
+    }
+    unsigned int lag = iRMax - r.begin();
+
+    float pot = 10 * log10(r[0]);
+
    * Implemente la regla de decisión sonoro o sordo e inserte el código correspondiente.
+   
+    if(pot>llindarpot && r1norm > llindarR1 && rmaxnorm > llindarR) return false;
+    return true;
 
    * Puede serle útil seguir las instrucciones contenidas en el documento adjunto `código.pdf`.
 

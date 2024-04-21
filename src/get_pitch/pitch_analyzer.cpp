@@ -36,6 +36,10 @@ namespace upc {
     switch (win_type) {
     case HAMMING:
       /// \TODO Implement the Hamming window
+      /// \FET
+      for (int i = 0; i < frameLen; ++i){
+        window[i] = 0.54 - 0.46*cos(2*M_PI*i/(frameLen-1));
+      }
       break;
     case RECT:
     default:
@@ -55,11 +59,16 @@ namespace upc {
       npitch_max = frameLen/2;
   }
 
+  float llindarpot = -40;
+  float llindarR1 = 0.7;
+  float llindarR = 0.7;
+
   bool PitchAnalyzer::unvoiced(float pot, float r1norm, float rmaxnorm) const {
     /// \TODO Implement a rule to decide whether the sound is voiced or not.
     /// * You can use the standard features (pot, r1norm, rmaxnorm),
     ///   or compute and use other ones.
-    if(rmaxnorm > 0.5) return false;
+    /// \FET 
+    if(pot>llindarpot && r1norm > llindarR1 && rmaxnorm > llindarR) return false;
     return true;
   }
 
