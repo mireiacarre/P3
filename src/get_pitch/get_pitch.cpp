@@ -5,6 +5,7 @@
 #include <string.h>
 #include <errno.h>
 
+
 #include "wavfile_mono.h"
 #include "pitch_analyzer.h"
 
@@ -25,6 +26,9 @@ Usage:
     get_pitch --version
 
 Options:
+    -1 FLOAT, --llindarpot FLOAT Llindar potencia en dB [default: -40]
+    -2 FLOAT, --llindarR1 FLOAT Llindar autocorrelació normalitzada [default: 0.7]
+    -3 FLOAT, --llindarRmax FLOAT llindar autocorrelació màxima normalitzada [default: 0.7]
     -h, --help  Show this screen
     --version   Show the version of the project
 
@@ -34,6 +38,14 @@ Arguments:
                     - One line per frame with the estimated f0
                     - If considered unvoiced, f0 must be set to f0 = 0
 )";
+
+float val_absolut(float numero){
+  if(numero < 0){
+    return numero *-1;
+  } else {
+    return numero;
+  }
+}
 
 int main(int argc, const char *argv[]) {
 	/// \TODO 
@@ -59,15 +71,24 @@ int main(int argc, const char *argv[]) {
   int n_shift = rate * FRAME_SHIFT;
 
   // Define analyzer
-  PitchAnalyzer analyzer(n_len, rate, PitchAnalyzer::RECT, 50, 500);
+  PitchAnalyzer analyzer(n_len, rate, PitchAnalyzer::HAMMING, 50, 500);
 
   /// \TODO
   /// Preprocess the input signal in order to ease pitch estimation. For instance,
   /// central-clipping or low pass filtering may be used.
+  /// \FET
   
-  // Iterate for each frame and save values in f0 vector
   vector<float>::iterator iX;
+  
+  float cc = -1.0;
+  for(iX = x.begin(); iX < x.end(); ++iX){
+    cc = std::max(cc, val_absolut(*iX));
+  }
+  cc = 0.01 * cc;
+
+  // Iterate for each frame and save values in f0 vector
   vector<float> f0;
+
   for (iX = x.begin(); iX + n_len < x.end(); iX = iX + n_shift) {
     float f = analyzer(iX, iX + n_len);
     f0.push_back(f);
@@ -76,6 +97,19 @@ int main(int argc, const char *argv[]) {
   /// \TODO
   /// Postprocess the estimation in order to supress errors. For instance, a median filter
   /// or time-warping may be used.
+  ///\FET
+
+  unsigned int L = 5;
+  vector<float> mediana(L);
+
+  for(int i = (L-1)/2; i < f0.size() - (L-1)/2; i++){
+    for(int j = 0; j < L; j++){
+      mediana[j] = f0[i+j-((L-1)/2)];
+    }
+    sort(mediana.begin(), mediana.end());
+
+    f0[i] = mediana[(L-1)/2];
+  }
 
   // Write f0 contour into the output file
   ofstream os(output_txt);
@@ -90,4 +124,6 @@ int main(int argc, const char *argv[]) {
   os << 0 << '\n';//pitch at t=Dur
 
   return 0;
+
+
 }

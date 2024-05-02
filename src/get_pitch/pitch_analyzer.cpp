@@ -1,5 +1,5 @@
 /// @file
-
+#include <fstream>
 #include <iostream>
 #include <math.h>
 #include "pitch_analyzer.h"
@@ -8,6 +8,11 @@ using namespace std;
 
 /// Name space of UPC
 namespace upc {
+
+  FILE *fp_pot;
+  FILE *fp_autocorr;
+  FILE *fp_corr1;
+
   void PitchAnalyzer::autocorrelation(const vector<float> &x, vector<float> &r) const {
 
     for (unsigned int l = 0; l < r.size(); ++l) {
@@ -105,9 +110,26 @@ namespace upc {
     //You can print these (and other) features, look at them using wavesurfer
     //Based on that, implement a rule for unvoiced
     //change to #if 1 and compile
-#if 0
-    if (r[0] > 0.0F)
-      cout << pot << '\t' << r[1]/r[0] << '\t' << r[lag]/r[0] << endl;
+#if 1
+    if (r[0] > 0.0F){
+      ///cout << pot << '\t' << r[1]/r[0] << '\t' << r[lag]/r[0] << endl;
+      std::ofstream pot_file("pot.txt", std::ofstream::app);
+      if(pot_file.is_open()){
+        pot_file << pot << std::endl;
+        pot_file.close();
+      }
+      std::ofstream r1norm_file("r1norm.txt", std::ofstream::app);
+      if (r1norm_file.is_open()) {
+        r1norm_file << r[1] / r[0] << std::endl;
+        r1norm_file.close();
+      }
+
+      std::ofstream rlag_file("rlag.txt", std::ofstream::app);
+      if (rlag_file.is_open()) {
+        rlag_file << r[lag] / r[0] << std::endl;
+        rlag_file.close();
+      } 
+    }
 #endif
     
     if (unvoiced(pot, r[1]/r[0], r[lag]/r[0]))

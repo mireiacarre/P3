@@ -26,7 +26,7 @@ Ejercicios básicos
      unos 30 ms de un fonema sonoro y su periodo de pitch; y, en otro *subplot*, se vea con claridad la
 	 autocorrelación de la señal y la posición del primer máximo secundario.
 
-    ![Análisi de una trama sonora](img/tramoSonoro30ms.jpg)
+    ![Análisi de una trama sonora](segmento30msAutocorr.jpg)
 
 	 NOTA: es más que probable que tenga que usar Python, Octave/MATLAB u otro programa semejante para
 	 hacerlo. Se valorará la utilización de la biblioteca matplotlib de Python.
@@ -65,9 +65,17 @@ Ejercicios básicos
 	    Recuerde configurar los paneles de datos para que el desplazamiento de ventana sea el adecuado, que
 		en esta práctica es de 15 ms.
 
+    ![Potencia, autocorrelación normalizada en uno y autocorrelación en su máximo secunmdario](Wavesurfer.PNG)
+
+    Primero, podemos ver el señal analizado, después tenemos representadas la potencia, la autocorrelación en su máximo y finalmente la autocorrelación en uno normalizada. 
+
       - Use el estimador de pitch implementado en el programa `wavesurfer` en una señal de prueba y compare
 	    su resultado con el obtenido por la mejor versión de su propio sistema.  Inserte una gráfica
 		ilustrativa del resultado de ambos estimadores.
+
+    ![Comparación de nuestra estimación del pitch con la del wavesurfer](PitchWavesurfer.PNG)
+
+    Como podemos ver, nuestros resultados (gráfica del medio) son muy parecidos a los del estimador del wavesurfer (gráfica de arriba).
      
 		Aunque puede usar el propio Wavesurfer para obtener la representación, se valorará
 	 	el uso de alternativas de mayor calidad (particularmente Python).
@@ -89,13 +97,20 @@ Ejercicios de ampliación
   * Inserte un *pantallazo* en el que se vea el mensaje de ayuda del programa y un ejemplo de utilización
     con los argumentos añadidos.
 
+  ![Mensaje de ayuda](ayuda.jpg)
 - Implemente las técnicas que considere oportunas para optimizar las prestaciones del sistema de estimación
   de pitch.
 
   Entre las posibles mejoras, puede escoger una o más de las siguientes:
 
   * Técnicas de preprocesado: filtrado paso bajo, diezmado, *center clipping*, etc.
+
+  ![Center clipping](centerclipping.PNG)
+
   * Técnicas de postprocesado: filtro de mediana, *dynamic time warping*, etc.
+
+  ![Filtro de mediana](mediana.PNG)
+
   * Métodos alternativos a la autocorrelación: procesado cepstral, *average magnitude difference function*
     (AMDF), etc.
   * Optimización **demostrable** de los parámetros que gobiernan el estimador, en concreto, de los que
